@@ -1,0 +1,4 @@
+---
+iputil_cmd: "/usr/sbin/ip"
+firecracker_cmd: "/data/Programs/firecracker/firecracker"
+firecracker_runpath: "/tmp"

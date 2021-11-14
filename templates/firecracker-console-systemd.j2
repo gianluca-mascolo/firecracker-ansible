@@ -1,0 +1,6 @@
+[Unit]
+Description=Firecracker Console
+
+[Service]
+Type=exec
+ExecStart=socat PTY,link={{firecracker_runpath}}/firecracker-internal-%i,echo=0,wait-slave PTY,link={{firecracker_runpath}}/firecracker-screen-%i,echo=0,wait-slave

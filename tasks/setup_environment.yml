@@ -1,0 +1,23 @@
+---
+- name: Create systemd user directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/systemd/user"
+    state: directory
+    recurse: yes
+
+- name: Create Firecracker console service
+  template:
+    src: templates/firecracker-console-systemd.j2
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/firecracker-console@.service"
+    mode: '0644'
+
+- name: Create Firecracker daemon service
+  template:
+    src: templates/firecracker-systemd.j2
+    dest: "{{ ansible_env.HOME }}/.config/systemd/user/firecracker@.service"
+    mode: '0644'
+
+- name: Reload systemd user config
+  systemd:
+    daemon_reload: yes
+    scope: user

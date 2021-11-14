@@ -1,0 +1,16 @@
+- name: Add tap
+  shell: "{{iputil_cmd}} tuntap add dev {{tap_interface}} mode tap user {{ansible_user_id}}"
+  args:
+    creates: "/proc/sys/net/ipv4/conf/{{tap_interface}}"
+  become: true
+
+- name: Add tap bridge
+  shell: "{{iputil_cmd}} link set {{tap_interface}} master {{bridge_interface}}"
+  become: true
+
+- name: Bridge up
+  shell: "{{iputil_cmd}} link set dev {{item}} up"
+  become: true
+  with_items:
+    - "{{bridge_interface}}"
+    - "{{tap_interface}}"

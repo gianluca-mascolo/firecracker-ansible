@@ -1,0 +1,12 @@
+[Unit]
+Description=Firecracker
+Requires=firecracker-console@%i.service
+After=firecracker-console@%i.service
+
+[Service]
+Type=exec
+ExecStart={{firecracker_cmd}} --api-sock {{firecracker_runpath}}/firecracker-%i.socket
+ExecStopPost=rm -f {{firecracker_runpath}}/firecracker-%i.socket
+StandardInput=tty-force
+StandardOutput=inherit
+TTYPath={{firecracker_runpath}}/firecracker-internal-%i
