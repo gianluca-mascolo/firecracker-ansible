@@ -11,26 +11,3 @@
     - name: Create Firecracker instances
       include_tasks: tasks/create_instances.yml
       with_items: "{{instances}}"
-
-    # - name: Make sure a service unit is running
-    #   systemd:
-    #     state: started
-    #     name: firecracker-console@ciao
-    #     scope: user
-
-    # - name: Make sure a service unit is running
-    #   systemd:
-    #     state: started
-    #     name: firecracker@ciao
-    #     scope: user
-
-    # - name: bootconfig
-    #   uri:
-    #     url: http://localhost/boot-source
-    #     method: PUT
-    #     unix_socket: "{{firecracker_socketpath}}/firecracker-ciao.socket"
-    #     body: "{{instances[0].boot_source|to_json}}"
-    #     status_code:
-    #       - 200
-    #       - 204
-    #     body_format: json
