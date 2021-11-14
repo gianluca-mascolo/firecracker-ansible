@@ -7,6 +7,7 @@
 
     - name: Configuring virtual tap interfaces
       include_tasks: tasks/setup_networking.yml
+      with_items: "{{instances}}"
 
     - name: Create Firecracker instances
       include_tasks: tasks/create_instances.yml

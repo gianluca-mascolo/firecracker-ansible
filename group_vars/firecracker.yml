@@ -7,3 +7,9 @@ instances:
       kernel_image_path: "/home/guru/Programs/firecracker/ttylinux/vmlinux"
       boot_args: "ramdisk_size=98304 root=/dev/ram0 ro console=ttyS0 reboot=k panic=1 pci=off enet nofirewall"
       initrd_path: "/home/guru/Programs/firecracker/ttylinux/filesys.gz"
+    machine_config:
+      vcpu_count: 1
+      mem_size_mib: 512
+      ht_enabled: false
+    network_interfaces: eth0
+      

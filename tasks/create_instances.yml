@@ -21,3 +21,38 @@
       - 200
       - 204
     body_format: json
+
+- name: "{{item.name}}: Configuring Machine"
+  uri:
+    url: http://localhost/machine-config
+    method: PUT
+    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
+    body: "{{item.machine_config|to_json}}"
+    status_code:
+      - 200
+      - 204
+    body_format: json
+  when: item.machine_config is defined
+
+- name: "{{item.name}}: Configuring Networking"
+  uri:
+    url: http://localhost/network-interfaces/eth0
+    method: PUT
+    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
+    body: "{\"iface_id\": \"eth0\",\"guest_mac\": \"AA:FC:00:00:00:AB\",\"host_dev_name\": \"fc-{{(item.name|hash('md5'))[0:8]}}\", \"allow_mmds_requests\": false}"
+    status_code:
+      - 200
+      - 204
+    body_format: json
+  when: item.network_interfaces is defined
+
+- name: "{{item.name}}: Start instance"
+  uri:
+    url: http://localhost/actions
+    method: PUT
+    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
+    body: '{"action_type": "InstanceStart"}'
+    status_code:
+      - 200
+      - 204
+    body_format: json
