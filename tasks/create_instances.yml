@@ -1,56 +1,61 @@
 ---
-- name: "{{item.name}}: Start Firecracker console"
+- name: "{{instance_item.key}}: Start Firecracker console"
   systemd:
     state: started
-    name: "firecracker-console@{{item.name}}"
+    name: "firecracker-console@{{instance_item.key}}"
     scope: user
 
-- name: "{{item.name}}: Start Firecracker service"
+- name: "{{instance_item.key}}: Start Firecracker service"
   systemd:
     state: started
-    name: "firecracker@{{item.name}}"
+    name: "firecracker@{{instance_item.key}}"
     scope: user
 
-- name: "{{item.name}}: Configuring Boot Source"
+- name: "{{instance_item.key}}: Set socket fact"
+  set_fact:
+    instance_socket: "{{firecracker_runpath}}/firecracker-{{instance_item.key}}.socket"
+
+- name: "{{instance_item.key}}: Configuring Boot Source"
   uri:
     url: http://localhost/boot-source
     method: PUT
-    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
-    body: "{{item.boot_source|to_json}}"
+    unix_socket: "{{instance_socket}}"
+    body: "{{instance_item.value['boot_source']|to_json}}"
     status_code:
       - 200
       - 204
     body_format: json
 
-- name: "{{item.name}}: Configuring Machine"
+- name: "{{instance_item.key}}: Configuring Machine"
   uri:
     url: http://localhost/machine-config
     method: PUT
-    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
-    body: "{{item.machine_config|to_json}}"
+    unix_socket: "{{instance_socket}}"
+    body: "{{instance_item.value['machine_config']|to_json}}"
     status_code:
       - 200
       - 204
     body_format: json
-  when: item.machine_config is defined
+  when: instance_item.value['machine_config'] is defined
 
-- name: "{{item.name}}: Configuring Networking"
+- name: "{{instance_item.key}}: Configuring Networking"
   uri:
-    url: http://localhost/network-interfaces/eth0
+    url: "http://localhost/network-interfaces/{{item.iface_id}}"
     method: PUT
-    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
-    body: "{\"iface_id\": \"eth0\",\"guest_mac\": \"AA:FC:00:00:00:AB\",\"host_dev_name\": \"fc-{{(item.name|hash('md5'))[0:8]}}\", \"allow_mmds_requests\": false}"
+    unix_socket: "{{instance_socket}}"
+    body: "{{item|to_json}}"
     status_code:
       - 200
       - 204
     body_format: json
-  when: item.network_interfaces is defined
+  loop: "{{instance_item.value['network_interfaces']}}"
+  when: instance_item.value['network_interfaces'] is defined
 
-- name: "{{item.name}}: Start instance"
+- name: "{{instance_item.key}}: Start instance"
   uri:
     url: http://localhost/actions
     method: PUT
-    unix_socket: "{{firecracker_runpath}}/firecracker-{{item.name}}.socket"
+    unix_socket: "{{instance_socket}}"
     body: '{"action_type": "InstanceStart"}'
     status_code:
       - 200

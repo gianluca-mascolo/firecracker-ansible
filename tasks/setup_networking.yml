@@ -1,16 +1,16 @@
-- name: Add tap
-  shell: "{{iputil_cmd}} tuntap add dev fc-{{(item.name|hash('md5'))[0:8]}} mode tap user {{ansible_user_id}}"
+- name: "{{instance_item.key}}: Create Tap interface"
+  shell: "{{iputil_cmd}} tuntap add dev {{item.host_dev_name}} mode tap user {{ansible_user_id}}"
   args:
-    creates: "/proc/sys/net/ipv4/conf/fc-{{(item.name|hash('md5'))[0:8]}}"
+    creates: "/proc/sys/net/ipv4/conf/{{item.host_dev_name}}"
   become: true
+  loop: "{{instances[instance_item.key]['network_interfaces']}}"
 
-- name: Add tap bridge
-  shell: "{{iputil_cmd}} link set fc-{{(item.name|hash('md5'))[0:8]}} master {{bridge_interface}}"
+- name: "{{instance_item.key}}: Add Tap interface to bridge"
+  shell: "{{iputil_cmd}} link set {{item.host_dev_name}} master {{bridge_interface}}"
   become: true
+  loop: "{{instances[instance_item.key]['network_interfaces']}}"
 
-- name: Bridge up
-  shell: "{{iputil_cmd}} link set dev {{item}} up"
+- name: "{{instance_item.key}}: Set Tap interface up"
+  shell: "{{iputil_cmd}} link set dev {{item.host_dev_name}} up"
   become: true
-  with_items:
-    - "{{bridge_interface}}"
-    - "fc-{{(item.name|hash('md5'))[0:8]}}"
+  loop: "{{instances[instance_item.key]['network_interfaces']}}"

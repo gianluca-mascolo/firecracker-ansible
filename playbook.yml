@@ -5,10 +5,20 @@
     - name: Configuring user environment
       include_tasks: tasks/setup_environment.yml
 
+    - name: Configure instance facts
+      include_tasks: tasks/configure_instances.yml
+      loop: "{{instances|dict2items}}"
+      loop_control:
+        loop_var: instance_item
+
     - name: Configuring virtual tap interfaces
       include_tasks: tasks/setup_networking.yml
-      with_items: "{{instances}}"
+      loop: "{{instances|dict2items}}"
+      loop_control:
+        loop_var: instance_item
 
     - name: Create Firecracker instances
       include_tasks: tasks/create_instances.yml
-      with_items: "{{instances}}"
+      loop: "{{instances|dict2items}}"
+      loop_control:
+        loop_var: instance_item
