@@ -35,4 +35,4 @@ To ask for sudo password (if needed) run the playbook with
 `ansible-playbook -K playbook`
 
 ## Disclaimer
-At this stage all I can say is: "it works on my machine(TM)".
+At this stage all I can say is: "it works on my machine(tm)".
