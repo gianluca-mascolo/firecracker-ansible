@@ -1,12 +1,15 @@
 - name: "{{instance_item.key}}: Prepare interface list"
   set_fact:
     interface_list: []
+  tags: [ always ]
 
 - name: "{{instance_item.key}}: Combine interface list"
   set_fact:
     interface_list: "{{ interface_list + [item|combine({'host_dev_name':'fc-'+((instance_item.key+'-'+item.iface_id) |hash('md5'))[0:8], 'guest_mac':('fc33'+((instance_item.key+'-'+item.iface_id) |hash('md5'))[0:8])|ansible.netcommon.hwaddr('linux') })] }}"
   loop: "{{instances[instance_item.key]['network_interfaces']}}"
+  tags: [ always ]
 
 - name: "{{instance_item.key}}: Merge interface list to instance"
   set_fact:
     instances: "{{ instances | combine({ instance_item.key: { 'network_interfaces': interface_list }},recursive=True) }}"
+  tags: [ always ]

@@ -3,14 +3,17 @@
   args:
     creates: "/proc/sys/net/ipv4/conf/{{item.host_dev_name}}"
   become: true
-  loop: "{{instances[instance_item.key]['network_interfaces']}}"
+  loop: "{{instance_item.value['network_interfaces']}}"
+  tags: [ create_interfaces, create_all ]
 
 - name: "{{instance_item.key}}: Add Tap interface to bridge"
   shell: "{{iputil_cmd}} link set {{item.host_dev_name}} master {{bridge_interface}}"
   become: true
-  loop: "{{instances[instance_item.key]['network_interfaces']}}"
+  loop: "{{instance_item.value['network_interfaces']}}"
+  tags: [ create_interfaces, create_all ]
 
 - name: "{{instance_item.key}}: Set Tap interface up"
   shell: "{{iputil_cmd}} link set dev {{item.host_dev_name}} up"
   become: true
-  loop: "{{instances[instance_item.key]['network_interfaces']}}"
+  loop: "{{instance_item.value['network_interfaces']}}"
+  tags: [ create_interfaces, create_all ]

@@ -1,0 +1,14 @@
+---
+- name: "{{instance_item.key}}: Stop Firecracker service"
+  systemd:
+    state: stopped
+    name: "firecracker@{{instance_item.key}}"
+    scope: user
+  tags: [ destroy, destroy_all ]
+
+- name: "{{instance_item.key}}: Stop Firecracker console"
+  systemd:
+    state: stopped
+    name: "firecracker-console@{{instance_item.key}}"
+    scope: user
+  tags: [ destroy, destroy_all ]
