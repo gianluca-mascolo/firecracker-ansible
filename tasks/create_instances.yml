@@ -4,16 +4,19 @@
     state: started
     name: "firecracker-console@{{instance_item.key}}"
     scope: user
+  tags: [ create ]
 
 - name: "{{instance_item.key}}: Start Firecracker service"
   systemd:
     state: started
     name: "firecracker@{{instance_item.key}}"
     scope: user
+  tags: [ create ]
 
 - name: "{{instance_item.key}}: Set socket fact"
   set_fact:
     instance_socket: "{{firecracker_runpath}}/firecracker-{{instance_item.key}}.socket"
+  tags: [ create ]
 
 - name: "{{instance_item.key}}: Configuring Boot Source"
   uri:
@@ -25,6 +28,7 @@
       - 200
       - 204
     body_format: json
+  tags: [ create ]
 
 - name: "{{instance_item.key}}: Configuring Machine"
   uri:
@@ -37,6 +41,7 @@
       - 204
     body_format: json
   when: instance_item.value['machine_config'] is defined
+  tags: [ create ]
 
 - name: "{{instance_item.key}}: Configuring Networking"
   uri:
@@ -50,6 +55,7 @@
     body_format: json
   loop: "{{instance_item.value['network_interfaces']}}"
   when: instance_item.value['network_interfaces'] is defined
+  tags: [ create ]
 
 - name: "{{instance_item.key}}: Start instance"
   uri:
@@ -61,3 +67,4 @@
       - 200
       - 204
     body_format: json
+  tags: [ create ]

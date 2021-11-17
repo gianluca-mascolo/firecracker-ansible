@@ -4,21 +4,40 @@
 
     - name: Configuring user environment
       include_tasks: tasks/setup_environment.yml
+      tags: [ always ]
 
     - name: Configure instance facts
       include_tasks: tasks/configure_instances.yml
       loop: "{{instances|dict2items}}"
       loop_control:
         loop_var: instance_item
+      tags: [ always ]
 
     - name: Configuring virtual tap interfaces
       include_tasks: tasks/setup_networking.yml
       loop: "{{instances|dict2items}}"
       loop_control:
         loop_var: instance_item
+      tags: [ create_interfaces ]
 
     - name: Create Firecracker instances
       include_tasks: tasks/create_instances.yml
       loop: "{{instances|dict2items}}"
       loop_control:
         loop_var: instance_item
+      tags: [ create ]
+
+    - name: Destroy Firecracker instances
+      include_tasks: tasks/destroy_instances.yml
+      loop: "{{instances|dict2items}}"
+      loop_control:
+        loop_var: instance_item
+      tags: [ never, destroy, destroy_all ]
+
+    - name: Destroy virtual tap interfaces
+      include_tasks: tasks/destroy_networking.yml
+      loop: "{{instances|dict2items}}"
+      loop_control:
+        loop_var: instance_item
+      tags: [ never, destroy_interfaces, destroy_all ]
+

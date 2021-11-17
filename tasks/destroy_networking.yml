@@ -1,0 +1,16 @@
+---
+- name: "{{instance_item.key}}: Set Tap interface down"
+  shell: "{{iputil_cmd}} link set dev {{item.host_dev_name}} up"
+  args:
+    removes: "/proc/sys/net/ipv4/conf/{{item.host_dev_name}}"
+  become: true
+  loop: "{{instance_item.value['network_interfaces']}}"
+  tags: [ destroy_interfaces, destroy_all ]
+
+- name: "{{instance_item.key}}: Delete Tap interface"
+  shell: "{{iputil_cmd}} link delete dev {{item.host_dev_name}}"
+  args:
+    removes: "/proc/sys/net/ipv4/conf/{{item.host_dev_name}}"
+  become: true
+  loop: "{{instance_item.value['network_interfaces']}}"
+  tags: [ destroy_interfaces, destroy_all ]
