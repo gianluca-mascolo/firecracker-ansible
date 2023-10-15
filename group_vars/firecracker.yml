@@ -1,15 +1,20 @@
 ---
-bridge_interface: "virbr0"
+bridge_interface: "docker0"
 instances:
   ttylinux:
     boot_source:
-      kernel_image_path: "/home/guru/Programs/firecracker/ttylinux/vmlinux"
-      boot_args: "ramdisk_size=98304 root=/dev/ram0 ro console=ttyS0 reboot=k panic=1 pci=off enet nofirewall"
-      initrd_path: "/home/guru/Programs/firecracker/ttylinux/filesys.gz"
+      kernel_image_path: "/home/john/.config/firecracker/ttylinux/vmlinux"
+      boot_args: "console=ttyS0 reboot=k panic=1 pci=off enet nofirewall"
+    drives:
+      rootfs:
+        drive_id: "rootfs"
+        path_on_host: "/home/john/.config/firecracker/ttylinux/ubuntu-22.04.ext4"
+        is_root_device: true
+        is_read_only: false
     machine_config:
       vcpu_count: 1
       mem_size_mib: 512
-      ht_enabled: false
     network_interfaces:
       - iface_id: eth0
-        allow_mmds_requests: true
+        # /usr/local/bin/fcnet-setup.sh will set the IP to 172.17.0.2/30
+        guest_mac: "06:00:ac:11:00:02"

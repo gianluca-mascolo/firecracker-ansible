@@ -30,6 +30,18 @@
     body_format: json
   tags: [ create ]
 
+- name: "{{instance_item.key}}: Configuring Root Source"
+  uri:
+    url: http://localhost/drives/rootfs
+    method: PUT
+    unix_socket: "{{instance_socket}}"
+    body: "{{instance_item.value['drives']['rootfs']|to_json}}"
+    status_code:
+      - 200
+      - 204
+    body_format: json
+  tags: [ create ]
+
 - name: "{{instance_item.key}}: Configuring Machine"
   uri:
     url: http://localhost/machine-config

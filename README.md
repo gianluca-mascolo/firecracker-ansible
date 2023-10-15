@@ -5,15 +5,20 @@
 This project is a personal research about Firecracker and Microvms.  
 It contains an Ansible playbook used to start one or more virtual machines described by a configuration file.
 
+## Fork Notes
+
+This was updated from the original to support newer versions of Firecracker.  It also sets up the guest network differently, making use of the `fcnet-setup.sh` script in the Ubuntu filesystem image.
+
 ## Requirements
 
 
 * [Firecracker](https://github.com/firecracker-microvm/firecracker) engine
 * Ansible
 * A Linux host with:
-  -  libvirt and a bridge configured
+  -  a network bridge configured (using `docker0` here)
   -  systemd
   -  screen
+  -  socat
   -  sudo rights
 * A [kernel and a root filesystem](https://github.com/firecracker-microvm/firecracker/blob/main/docs/getting-started.md#running-firecracker) for your vm. 
 
